@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="wrapper">
+	<div class="tags_in_use">
+		<a href="{{ url_for('tags', tag=data['query'], page=data['page']) }}">Return to browse</a>
+		<h3>Tagged with</h3>
+		<p class="tag-list">
+			{% for atag in data['tags'] %}
+				<a href="{{ url_for('tags', tag=atag[1]) }}">{{ atag[2] }}</a>
+				{% if data['tags']|count > 1 %}
+				<a class="command" href="{{ url_for('remove_tag', photo_id=data['photo'][0], old_tag=atag[1], query=data['query'], page=data['page']) }}">delete</a>
+				{% endif %}
+				<br />
+			{% endfor %}
+		</p>
+		
+        <form action="{{ url_for('add_tags') }}" accept-charset="UTF-8" method="post">
+            <input type="hidden" name="id" id="ids" value="{{ data['photo'][0] }}">
+            <input type="hidden" name="query" value="{{ data['query'] }}">
+            <input type="hidden" name="page" value="{{ data['page'] }}">
+            <input type="text" name="new_tag" size="15" id="new_tag" autocomplete="off" class="ac_input">
+            <input type="submit" name="commit" value="add" data-disable-with="add">
+        </form>
+		<a href="{{ url_for('static', filename='images/' + data['photo'][1]) }}" target="_new">Full sized image</a>
+	</div>
+	<div class="photos_tagged">
+		<img src="{{ url_for('static', filename='medium/' + data['photo'][3]) }}"/>
+	</div>
+</div>
+{% endblock %}

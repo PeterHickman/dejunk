@@ -1,0 +1,110 @@
+import glob
+import os
+import sys
+
+from flask import Flask
+
+from lib.database_wrapper import DatabaseWrapper
+
+app = Flask(__name__)
+app.config.from_pyfile('settings.cfg')
+
+db = DatabaseWrapper(app.config.get_namespace('DATABASE_'))
+
+config = app.config.get_namespace('IMAGES_')
+
+
+def count_images(photo):
+    exists = 0
+
+    filename = config['destination_root'] + 'images/' + photo[1]
+    if os.path.exists(filename):
+        exists += 1
+
+    filename = config['destination_root'] + 'medium/' + photo[3]
+    if os.path.exists(filename):
+        exists += 1
+
+    filename = config['destination_root'] + 'thumbs/' + photo[3]
+    if os.path.exists(filename):
+        exists += 1
+
+    return exists
+
+
+def has_no_tags(photo):
+    number = len(db.all_tags_for_photo(photo[0]))
+    if number != 0:
+        print("{} {} still has {} tags".format(photo[2], photo[0], number))
+
+
+def has_some_tags(photo):
+    number = len(db.all_tags_for_photo(photo[0]))
+    if number == 0:
+        print("{} {} should have at least 1 tag".format(photo[2], photo[0]))
+
+
+def has_all_images(photo):
+    number = count_images(photo)
+    if number != 3:
+        print("{} {} is missing files. Has {}".format(photo[2], photo[0], number))
+
+
+def has_no_images(photo):
+    number = count_images(photo)
+    if number != 0:
+        print("{} {} needs it's files removed".format(photo[2], photo[0]))
+
+##
+# First we check the database against the filesystem
+##
+
+image_names = []
+other_names = []
+
+for photo in db.all_the_photos():
+    if photo[2] == 'deleted':
+        has_no_tags(photo)
+        has_no_images(photo)
+
+    elif photo[2] == 'junk':
+        has_no_tags(photo)
+        has_all_images(photo)
+        image_names.append(photo[1])
+        other_names.append(photo[3])
+
+    elif photo[2] == 'ok':
+        has_some_tags(photo)
+        has_all_images(photo)
+        image_names.append(photo[1])
+        other_names.append(photo[3])
+
+    elif photo[2] == 'unknown':
+        has_no_tags(photo)
+        has_all_images(photo)
+        image_names.append(photo[1])
+        other_names.append(photo[3])
+
+##
+# Now check the filesystem
+##
+
+for filename in glob.glob(config['destination_root'] + 'images/*'):
+    basename = os.path.basename(filename)
+
+    if basename not in image_names:
+        print("The image {} is not in the database".format(basename))
+
+for filename in glob.glob(config['destination_root'] + 'medium/*'):
+    basename = os.path.basename(filename)
+
+    if basename not in other_names:
+        print("The medium {} is not in the database".format(basename))
+
+for filename in glob.glob(config['destination_root'] + 'thumbs/*'):
+    basename = os.path.basename(filename)
+
+    if basename not in other_names:
+        print("The thumbs {} is not in the database".format(basename))
+
+sys.exit(0)

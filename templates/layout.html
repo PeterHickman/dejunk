@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Dejunk Flickr Images</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='screen.css') }}"/>
+
+    <script src="{{ url_for('static', filename='jquery-1.2.6.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.autocomplete.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.bgiframe.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+    <!--
+    <script>
+      $(document).ready(function(){
+        var data = <%= Tag.tags_as_string %>.split(",");
+        $("#new_tag").autocomplete(data);
+      });
+    </script>
+    -->
+</head>
+<body>
+    <ul class="menu">
+        {% if selected_menu == 'status' %}
+        <li><a href="{{ url_for('status') }}" class="selected">Status</a></li>
+        {% else %}
+        <li><a href="{{ url_for('status') }}">Status</a></li>
+        {% endif %}
+
+        {% if selected_menu == 'dejunk' %}
+        <li><a href="{{ url_for('dejunk') }}" class="selected">Dejunk</a></li>
+        {% else %}
+        <li><a href="{{ url_for('dejunk') }}">Dejunk</a></li>
+        {% endif %}
+
+        {% if selected_menu == 'purge' %}
+        <li><a href="{{ url_for('purge') }}" class="selected">Purge</a></li>
+        {% else %}
+        <li><a href="{{ url_for('purge') }}">Purge</a></li>
+        {% endif %}
+
+        {% if selected_menu == 'tags' %}
+        <li><a href="{{ url_for('tags') }}" class="selected">Tags</a></li>
+        {% else %}
+        <li><a href="{{ url_for('tags') }}">Tags</a></li>
+        {% endif %}
+
+        {% if selected_menu == 'admin' %}
+        <li><a href="{{ url_for('admin') }}" class="selected">Admin</a></li>
+        {% else %}
+        <li><a href="{{ url_for('admin') }}">Admin</a></li>
+        {% endif %}
+
+        {% if selected_menu == 'picture' %}
+        <li><a href="#" class="selected">Picture</a></li>
+        {% endif %}
+    </ul>
+    {% block body %}{% endblock %}
+</body>
+</html>

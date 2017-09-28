@@ -1,0 +1,190 @@
+body { 
+	background-color: #fff; 
+	color: #000; 
+	font-family: sans-serif;
+}
+
+a {
+	text-decoration: none;
+	color: #555;
+}
+
+img {
+	border: 0;
+}
+
+/* We use a table to display thumbnails in a grid */
+
+td { 
+	width: 135px; 
+	height: 135px;
+}
+
+td.odd { 
+	background-color: #333;
+}
+
+td.even {
+	background-color: #777;
+}
+
+/* The menus are inlined lists */
+
+ul.menu { 
+	list-style-type: none; 
+	border-bottom: 2px solid #000; 
+	margin-top: 1em;
+	display: block;
+}
+
+ul.menu li { 
+	display: inline;
+	margin: 1em; 
+	color: #555; 
+	font-weight: bold;
+}
+
+ul.menu li a.selected {
+	color: #000;
+	border-bottom: 2px solid #0d0;
+}
+
+ul.menu li a {
+	color: #aaa;
+}
+
+ul.paginate {
+	list-style-type: none;
+}
+
+ul.paginate li {
+	display: inline;
+}
+
+.tag-list {
+	font-size: 95%;
+}
+
+.command {
+	font-size: 75%;
+	color: #000;
+}
+
+/*
+ * Based on https://codepen.io/nxworld/pen/ByGGPj
+ */
+
+.tag_cloud ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 70%;
+}
+
+.tag_cloud ul li {
+	display: inline-block;
+	margin: 0 .3em .3em 0;
+	padding: 0;
+}
+
+.tag_cloud ul li a {
+	position: relative;
+	display: inline-block;
+	height: 28px;
+	line-height: 28px;
+	padding-left: 7px;
+	padding-right: 7px;
+	background-color: #dac292;
+	border-radius: 3px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	color: #000;
+	font-size: 13px;
+	text-decoration: none;
+	-webkit-transition: .2s;
+	transition: .2s;
+}
+
+.tag_cloud li span {
+	top: 3px;
+	right: 3px;
+	z-index: 2;
+	padding: 2px;
+	height: 22px;
+	line-height: 22px;
+	background-color: #e6e2d3;
+	border-radius: 7px;
+	color: #000;
+	font-size: 12px;
+	text-align: center;
+	-webkit-transition: .2s;
+	transition: .2s;
+}
+
+.tag_cloud ul li a:hover {
+	background-color: #eca1a6;
+	color: #000;
+}
+
+.tag_cloud ul li a:hover span {
+	background-color: #fff;
+	color: #000;
+}
+
+.ok_f {
+	color: #0c0;
+}
+
+.ok_b {
+	background-color: #0c0;
+}
+
+.junk_f {
+	color: #c00;
+}
+
+.junk_b {
+	background-color: #c00;
+}
+
+div.tags_in_use {
+	width: 15%;
+	margin-right: 1em;
+	float: left;
+	overflow: visible;
+}
+
+div.photos_tagged {
+	float: left;
+	margin: 0;
+	width: 77%;
+}
+
+ul.paginate li {
+	padding: 10px;
+	border-bottom: 2px solid #000;
+}
+
+ul.paginate li.current {
+	border-bottom: 2px solid #0f0;
+}
+
+ul.paginate li.skipped {
+	color: #aaa;
+	border-bottom: 2px solid #fff;
+}
+
+.flash_note {
+	background-color: #0c0;
+	color: #fff;
+	padding: 1em;
+	text-align: center;
+}
+
+.flash_error {
+	background-color: #c00;
+	color: #fff;
+	padding: 1em;
+	text-align: center;
+}
