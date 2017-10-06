@@ -1,31 +1,28 @@
+#!/usr/bin/env python
+
 import glob
 import os
 import sys
 
-from flask import Flask
-
 from lib.database_wrapper import DatabaseWrapper
 
-app = Flask(__name__)
-app.config.from_pyfile('settings.cfg')
+import settings as config
 
-db = DatabaseWrapper(app.config.get_namespace('DATABASE_'))
-
-config = app.config.get_namespace('IMAGES_')
+db = DatabaseWrapper(config.CONNECTION_STRING)
 
 
 def count_images(photo):
     exists = 0
 
-    filename = config['destination_root'] + 'images/' + photo[1]
+    filename = config.DESTINATION_ROOT + 'images/' + photo[1]
     if os.path.exists(filename):
         exists += 1
 
-    filename = config['destination_root'] + 'medium/' + photo[3]
+    filename = config.DESTINATION_ROOT + 'medium/' + photo[3]
     if os.path.exists(filename):
         exists += 1
 
-    filename = config['destination_root'] + 'thumbs/' + photo[3]
+    filename = config.DESTINATION_ROOT + 'thumbs/' + photo[3]
     if os.path.exists(filename):
         exists += 1
 
@@ -89,22 +86,20 @@ for photo in db.all_the_photos():
 # Now check the filesystem
 ##
 
-for filename in glob.glob(config['destination_root'] + 'images/*'):
+for filename in glob.glob(config.DESTINATION_ROOT + 'images/*'):
     basename = os.path.basename(filename)
 
     if basename not in image_names:
         print("The image {} is not in the database".format(basename))
 
-for filename in glob.glob(config['destination_root'] + 'medium/*'):
+for filename in glob.glob(config.DESTINATION_ROOT + 'medium/*'):
     basename = os.path.basename(filename)
 
     if basename not in other_names:
         print("The medium {} is not in the database".format(basename))
 
-for filename in glob.glob(config['destination_root'] + 'thumbs/*'):
+for filename in glob.glob(config.DESTINATION_ROOT + 'thumbs/*'):
     basename = os.path.basename(filename)
 
     if basename not in other_names:
         print("The thumbs {} is not in the database".format(basename))
-
-sys.exit(0)
