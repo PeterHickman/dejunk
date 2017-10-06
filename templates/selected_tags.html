@@ -3,16 +3,16 @@
 <div class="wrapper">
     <div class="tags_in_use">
         <h3>Tags in use</h3>
-        <p class="tag-list">
+        <span class="selected_tags">
             {% for tag in data['used_tags'] %}
-                <a href="{{ url_for('tags', tag=tag[0]) }}">{{ tag[1] }}</a>
+            <div class="tag">
                 {% if data['used_tags']|count > 1 %}
-                <a href="{{ url_for('tags', tag=data['query']+' '+tag[0]) }}" class="command">+</a>
-                <a href="{{ url_for('tags', tag=data['query']+' -'+tag[0]) }}" class="command">-</a>
+                <span class="button plus"><a href="{{ url_for('tags', tag=data['query']+' '+tag[0]) }}">+</a></span><span class="button minus"><a href="{{ url_for('tags', tag=data['query']+' -'+tag[0]) }}">-</a></span>
                 {% endif %}
-                <br />
+                <a href="{{ url_for('tags', tag=tag[0]) }}">{{ tag[1] }}</a>
+            </div>
             {% endfor %}
-        </p>
+        </span>
         <h3>Add tags to selected items</h3>
         <form action="{{ url_for('add_tags') }}" accept-charset="UTF-8" method="post">
             <input type="hidden" name="id" id="ids" value="">
