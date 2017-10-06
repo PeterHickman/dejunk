@@ -5,11 +5,9 @@ from flask import Flask, render_template, request, redirect, url_for
 from lib.database_wrapper import DatabaseWrapper
 
 app = Flask(__name__)
-app.config.from_pyfile('settings.cfg')
+app.config.from_pyfile('settings.py')
 
-db = DatabaseWrapper(app.config.get_namespace('DATABASE_'))
-
-ic = app.config.get_namespace('DISPLAY_')
+db = DatabaseWrapper(app.config['CONNECTION_STRING'])
 
 
 def get_page(req):
@@ -34,7 +32,7 @@ def dejunk():
     else:
         page = get_page(request)
 
-    data = db.photos_with_status('unknown', ic['images_a_page'], ic['images_a_row'], page)
+    data = db.photos_with_status('unknown', app.config['IMAGES_A_PAGE'], app.config['IMAGES_A_ROW'], page)
     return render_template('dejunk.html', selected_menu='dejunk', data=data)
 
 
@@ -45,7 +43,7 @@ def purge():
     else:
         page = get_page(request)
 
-    data = db.photos_with_status('junk', ic['images_a_page'], ic['images_a_row'], page)
+    data = db.photos_with_status('junk', app.config['IMAGES_A_PAGE'], app.config['IMAGES_A_ROW'], page)
     return render_template('purge.html', selected_menu='purge', data=data)
 
 
@@ -58,7 +56,7 @@ def tags(tag=None):
     else:
         page = get_page(request)
 
-        data = db.photos_by_tags(tag, ic['images_a_page'], ic['images_a_row'], page)
+        data = db.photos_by_tags(tag, app.config['IMAGES_A_PAGE'], app.config['IMAGES_A_ROW'], page)
         return render_template('selected_tags.html', selected_menu='tags', data=data)
 
 

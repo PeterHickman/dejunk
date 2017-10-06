@@ -6,15 +6,15 @@ import tags
 
 
 class DatabaseWrapper(object):
-    def __init__(self, config):
-        self._config = config
+    def __init__(self, connection_string):
+        self._connection_string = connection_string
         self._cursor = self._make_connection()
 
     def _make_connection(self):
         try:
-            conn = psycopg2.connect(self._config['connection_string'])
+            conn = psycopg2.connect(self._connection_string)
         except psycopg2.Error, e:
-            raise RuntimeError("Unable to connect to the database with [{}] {}".format(self._config['connection_string'], e.diag.message_primary))
+            raise RuntimeError("Unable to connect to the database with [{}] {}".format(self._connection_string, e.diag.message_primary))
 
         conn.autocommit = True
         return conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
