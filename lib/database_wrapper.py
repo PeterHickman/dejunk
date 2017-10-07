@@ -153,7 +153,7 @@ class DatabaseWrapper(object):
         # This is the information we will be returning
         ##
         results = {}
-        results['query'] = query
+        results['query'] = tags.rewrite_query(query)
         results['describe'] = tags.describe(query)
 
         ##
@@ -161,7 +161,12 @@ class DatabaseWrapper(object):
         ##
         sql = tags.tagged_with(query, True)
         self._cursor.execute(sql)
-        results['total_records'] = int(self._cursor.fetchone()[0])
+
+        row = self._cursor.fetchone()
+        if row is None:
+            results['total_records'] = 0
+        else:
+            results['total_records'] = int(row[0])
 
         ##
         # The tabs for pagination and the revised 'page'
@@ -180,9 +185,12 @@ class DatabaseWrapper(object):
         ##
         # Get all the tags associated with the photos
         ##
-        sql = "SELECT DISTINCT(name) FROM tags WHERE photo_id IN ({})".format(", ".join(photo_ids))
-        self._cursor.execute(sql)
-        results['used_tags'] = [list(tags.format(row[0])) for row in self._cursor.fetchall()]
+        if len(photo_ids) > 0:
+            sql = "SELECT DISTINCT(name) FROM tags WHERE photo_id IN ({})".format(", ".join(photo_ids))
+            self._cursor.execute(sql)
+            results['used_tags'] = [list(tags.format(row[0])) for row in self._cursor.fetchall()]
+        else:
+            results['used_tags'] = []
 
         ##
         # Get the photos just on this page
@@ -192,9 +200,12 @@ class DatabaseWrapper(object):
 
         photo_ids_on_page = photo_ids[page_start:page_end]
 
-        sql = "SELECT * FROM photos WHERE id IN ({}) ORDER BY id DESC".format(", ".join(photo_ids_on_page))
-        self._cursor.execute(sql)
-        rows = self._cursor.fetchall()
+        if len(photo_ids) > 0:
+            sql = "SELECT * FROM photos WHERE id IN ({}) ORDER BY id DESC".format(", ".join(photo_ids_on_page))
+            self._cursor.execute(sql)
+            rows = self._cursor.fetchall()
+        else:
+            rows = []
 
         results['rows'] = group_by(rows, row_length)
 
@@ -206,3 +217,30 @@ class DatabaseWrapper(object):
 
         picture = self._cursor.fetchone()
         return picture
+
+    def convert_junk(self):
+        # Find photos with the junk tag
+        sql = "SELECT photo_id FROM tags WHERE name = 'junk'"
+        self._cursor.execute(sql)
+        photo_ids = [row[0] for row in self._cursor.fetchall()]
+
+        for photo_id in photo_ids:
+            # Set their status to junk
+            sql = "UPDATE photos SET status = 'junk' WHERE id = %(photo_id)s"
+            self._cursor.execute(sql, {'photo_id': photo_id})
+
+            # Remove their tags
+            sql = "DELETE FROM tags WHERE photo_id = %(photo_id)s"
+            self._cursor.execute(sql, {'photo_id': photo_id})
+
+    def remove_surplus(self):
+        # Find photos with the untagged tag
+        sql = "SELECT photo_id FROM tags WHERE name = 'untagged'"
+        self._cursor.execute(sql)
+        photo_ids = [row[0] for row in self._cursor.fetchall()]
+
+        for photo_id in photo_ids:
+            tags = self.all_tags_for_photo(photo_id)
+            if len(tags) > 1:
+                sql = "DELETE FROM tags WHERE name = 'untagged' AND photo_id = %(photo_id)s"
+                self._cursor.execute(sql, {'photo_id': photo_id})

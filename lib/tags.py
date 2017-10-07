@@ -5,10 +5,12 @@ def format(text):
     clean_tag = re.sub("\s+", " ", text.lower().strip())
 
     name = clean_tag.replace(' ', '_')
-    display = clean_tag.title().replace('_', ' ')
+    display = display_name(clean_tag)
 
     return name, display
 
+def display_name(name):
+    return name.title().replace('_', ' ')
 
 def split_tags(tags):
     """
@@ -49,13 +51,13 @@ def describe(tags):
 
     text = ''
     if len(includes) > 0:
-        text += "Includes: {}".format(', '.join(includes))
+        text += "Includes: {}".format(', '.join([display_name(name) for name in includes]))
 
     if len(excludes) > 0:
         if len(text) > 0:
             text += ". "
 
-        text += "Excludes: {}".format(', '.join(excludes))
+        text += "Excludes: {}".format(', '.join([display_name(name) for name in excludes]))
 
     return text
 

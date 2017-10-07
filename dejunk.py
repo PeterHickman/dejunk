@@ -3,6 +3,7 @@ import sys
 from flask import Flask, render_template, request, redirect, url_for
 
 from lib.database_wrapper import DatabaseWrapper
+import lib.tags as tag_tools
 
 app = Flask(__name__)
 app.config.from_pyfile('settings.py')
@@ -51,13 +52,22 @@ def purge():
 @app.route('/tags/<tag>')
 def tags(tag=None):
     if tag is None:
-        tags = db.all_tags_and_counts()
-        return render_template('tags.html', selected_menu='tags', tags=tags)
+        query = db.all_tags_and_counts()
+        return render_template('tags.html', selected_menu='tags', tags=query)
     else:
         page = get_page(request)
 
-        data = db.photos_by_tags(tag, app.config['IMAGES_A_PAGE'], app.config['IMAGES_A_ROW'], page)
-        return render_template('selected_tags.html', selected_menu='tags', data=data)
+        query = tag_tools.rewrite_query(tag)
+
+        if query == tag:
+            data = db.photos_by_tags(query, app.config['IMAGES_A_PAGE'], app.config['IMAGES_A_ROW'], page)
+
+            return render_template('selected_tags.html', selected_menu='tags', data=data)
+        else:
+            ##
+            # This redirect is just to clean up the url. It bugs me!
+            ##
+            return redirect(url_for('tags', tag=query, page=page))
 
 
 @app.route('/add_tags', methods=['POST'])
@@ -66,12 +76,15 @@ def add_tags():
 
     page = get_page(request)
 
+    x = tag_tools.rewrite_query(request.form['query'])
+
     if ',' in request.form['id']:
         # Multiple images
-        return redirect(url_for('tags', tag=request.form['query'], page=page))
+        return redirect(url_for('tags', tag=x, page=page))
     else:
         # Single image
-        return redirect(url_for('picture', photo_id=request.form['id'], view=request.form['query'], page=page))
+        return redirect(url_for('picture', photo_id=request.form['id'], view=x, page=page))
+
 
 @app.route('/remove_tag')
 def remove_tag():
@@ -79,14 +92,16 @@ def remove_tag():
 
     page = get_page(request)
 
-    return redirect(url_for('picture', photo_id=request.args['photo_id'], view=request.args['query'], page=page))
+    x = tag_tools.rewrite_query(request.args['query'])
+
+    return redirect(url_for('picture', photo_id=request.args['photo_id'], view=x, page=page))
 
 
 @app.route('/picture/<photo_id>')
 def picture(photo_id):
     data = {}
     data['page'] = get_page(request)
-    data['query'] = request.args['view']
+    data['query'] = tag_tools.rewrite_query(request.args['view'])
     data['photo'] = db.get_picture(photo_id)
     data['tags'] = db.all_tags_for_photo(photo_id)
 
@@ -95,4 +110,18 @@ def picture(photo_id):
 
 @app.route('/admin')
 def admin():
-    return render_template('holding_page.html', selected_menu='admin', text='ADMIN')
+    return render_template('admin.html', selected_menu='admin')
+
+
+@app.route('/convert_junk')
+def convert_junk():
+    db.convert_junk()
+    # Set the flash message
+    return render_template('admin.html', selected_menu='admin')
+
+
+@app.route('/remove_surplus')
+def remove_surplus():
+    db.remove_surplus()
+    # Set the flash message
+    return render_template('admin.html', selected_menu='admin')
