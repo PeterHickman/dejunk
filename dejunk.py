@@ -110,18 +110,18 @@ def picture(photo_id):
 
 @app.route('/admin')
 def admin():
-    return render_template('admin.html', selected_menu='admin')
+    return render_template('admin.html', selected_menu='admin', message=None)
 
 
 @app.route('/convert_junk')
 def convert_junk():
-    db.convert_junk()
-    # Set the flash message
-    return render_template('admin.html', selected_menu='admin')
+    count = db.convert_junk()
+    message = "{} photos have been converted to junk status".format(count)
+    return render_template('admin.html', selected_menu='admin', message=message)
 
 
 @app.route('/remove_surplus')
 def remove_surplus():
-    db.remove_surplus()
-    # Set the flash message
-    return render_template('admin.html', selected_menu='admin')
+    count = db.remove_surplus()
+    message = "{} surplus untagged tags have been removed".format(count)
+    return render_template('admin.html', selected_menu='admin', message=message)
