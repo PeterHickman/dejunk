@@ -8,7 +8,7 @@ import shutil
 from lib.database_wrapper import DatabaseWrapper
 from lib.resize import resize
 
-from settings import config
+import settings as config
 
 db = DatabaseWrapper(config.CONNECTION_STRING)
 
