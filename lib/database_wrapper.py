@@ -147,7 +147,8 @@ class DatabaseWrapper(object):
 
         for photo_id in photo_ids:
             for new_tag in tags:
-                self.add_tag_to_photo(photo_id, new_tag)
+                if new_tag != '':
+                    self.add_tag_to_photo(photo_id, new_tag)
 
     def all_tags_and_counts(self):
         sql = "SELECT DISTINCT(display), name, COUNT(*) FROM tags GROUP BY display, name ORDER BY display"
