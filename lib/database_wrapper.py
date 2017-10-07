@@ -110,6 +110,9 @@ class DatabaseWrapper(object):
                 sql = "UPDATE photos SET status = %(status)s WHERE id = %(photo_id)s"
                 self._cursor.execute(sql, {'status': 'deleted', 'photo_id': photo_id})
 
+                sql = "DELETE FROM tags where photo_id = %(photo_id)s"
+                self._cursor.execute(sql, {'photo_id': photo_id})
+
         return page
 
     def all_the_photos(self):
@@ -140,6 +143,10 @@ class DatabaseWrapper(object):
 
         sql = "DELETE FROM tags WHERE photo_id = %(photo_id)s AND name = %(name)s"
         self._cursor.execute(sql, {'photo_id': photo_id, 'name': name})
+
+    def remove_all_tags_from_photo(self, photo_id):
+        sql = "DELETE FROM tags WHERE photo_id = %(photo_id)s"
+        self._cursor.execute(sql, {'photo_id': photo_id})
 
     def add_tags_to_photos(self, req):
         photo_ids = [int(x) for x in req['id'].split(',')]

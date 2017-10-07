@@ -29,6 +29,9 @@ for photo in db.all_the_photos():
         if os.path.exists(filename):
             print("Removing {}".format(filename))
             os.remove(filename)
+
+        db.remove_all_tags_from_photo(photo[0])
+
     else:
         source = config.DESTINATION_ROOT + 'images/' + photo[1]
 
