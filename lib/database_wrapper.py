@@ -19,6 +19,13 @@ class DatabaseWrapper(object):
         conn.autocommit = True
         return conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    def _photos_by_one_tag(self, name):
+        sql = "SELECT photo_id FROM tags WHERE name = %(name)s"
+        self._cursor.execute(sql, {'name': name})
+        photo_ids = [row[0] for row in self._cursor.fetchall()]
+
+        return photo_ids
+
     def status_information(self):
         data = {'ok': 0, 'junk': 0, 'unknown': 0, 'total': 0}
 
@@ -219,28 +226,32 @@ class DatabaseWrapper(object):
         return picture
 
     def convert_junk(self):
-        # Find photos with the junk tag
-        sql = "SELECT photo_id FROM tags WHERE name = 'junk'"
-        self._cursor.execute(sql)
-        photo_ids = [row[0] for row in self._cursor.fetchall()]
+        photo_ids = self._photos_by_one_tag('junk')
+
+        counter = 0
 
         for photo_id in photo_ids:
-            # Set their status to junk
             sql = "UPDATE photos SET status = 'junk' WHERE id = %(photo_id)s"
             self._cursor.execute(sql, {'photo_id': photo_id})
 
-            # Remove their tags
             sql = "DELETE FROM tags WHERE photo_id = %(photo_id)s"
             self._cursor.execute(sql, {'photo_id': photo_id})
 
+            counter += 1
+
+        return counter
+
     def remove_surplus(self):
-        # Find photos with the untagged tag
-        sql = "SELECT photo_id FROM tags WHERE name = 'untagged'"
-        self._cursor.execute(sql)
-        photo_ids = [row[0] for row in self._cursor.fetchall()]
+        photo_ids = self._photos_by_one_tag('untagged')
+
+        counter = 0
 
         for photo_id in photo_ids:
             tags = self.all_tags_for_photo(photo_id)
             if len(tags) > 1:
                 sql = "DELETE FROM tags WHERE name = 'untagged' AND photo_id = %(photo_id)s"
                 self._cursor.execute(sql, {'photo_id': photo_id})
+
+                counter += 1
+
+        return counter
