@@ -116,6 +116,9 @@ class DatabaseWrapper(object):
         return page
 
     def all_the_photos(self):
+        """
+        Get all the photos for the utilities
+        """
         sql = "SELECT * FROM photos ORDER BY id DESC"
         self._cursor.execute(sql)
 
@@ -200,12 +203,26 @@ class DatabaseWrapper(object):
         ##
         # Get all the tags associated with the photos
         ##
+        includes, excludes = tags.split_tags(query)
+
+        results['used_tags'] = []
         if len(photo_ids) > 0:
             sql = "SELECT DISTINCT(name) FROM tags WHERE photo_id IN ({})".format(", ".join(photo_ids))
             self._cursor.execute(sql)
-            results['used_tags'] = [list(tags.format(row[0])) for row in self._cursor.fetchall()]
-        else:
-            results['used_tags'] = []
+            for row in self._cursor.fetchall():
+                name, display = tags.format(row[0])
+                can_add = True
+                if name in includes:
+                    can_add = False
+
+                x = [name, display, can_add, True]
+                results['used_tags'].append(x)
+
+        for excluded in excludes:
+            name, display = tags.format(excluded)
+            results['used_tags'].append([name, display, True, False])
+
+        results['used_tags'] = sorted(results['used_tags'])
 
         ##
         # Get the photos just on this page
