@@ -7,7 +7,16 @@
             {% for tag in data['used_tags'] %}
             <div class="tag">
                 {% if data['used_tags']|count > 1 %}
-                <span class="button plus"><a href="{{ url_for('tags', tag=data['query']+' '+tag[0]) }}">+</a></span><span class="button minus"><a href="{{ url_for('tags', tag=data['query']+' -'+tag[0]) }}">-</a></span>
+                {% if tag[2] == True %}
+                <span class="button plus"><a href="{{ url_for('tags', tag=data['query']+' '+tag[0]) }}">+</a></span>
+                {% else %}
+                <span class="button blank">&nbsp</span>
+                {% endif %}
+                {% if tag[3] == True %}
+                <span class="button minus"><a href="{{ url_for('tags', tag=data['query']+' -'+tag[0]) }}">-</a></span>
+                {% else %}
+                <span class="button blank">&nbsp;</span>
+                {% endif %}
                 {% endif %}
                 <a href="{{ url_for('tags', tag=tag[0]) }}">{{ tag[1] }}</a>
             </div>

@@ -215,13 +215,16 @@ span.selected_tags div.tag span.button {
 }
 
 span.selected_tags div.tag span.plus {
-  background-color: #0d0
+  background-color: #0d0;
 }
 
 span.selected_tags div.tag span.minus {
-  background-color: #d00
+  background-color: #d00;
 }
 
+span.selected_tags div.tag span.blank {
+	background-color: #aaa;
+}
 span.selected_tags div.tag span a {
 	color: #fff;
 }
