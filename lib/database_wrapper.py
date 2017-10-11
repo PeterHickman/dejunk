@@ -212,10 +212,13 @@ class DatabaseWrapper(object):
             for row in self._cursor.fetchall():
                 name, display = tags.format(row[0])
                 can_add = True
+                can_remove = True
                 if name in includes:
                     can_add = False
+                    if len(includes) == 1:
+                        can_remove = False
 
-                x = [name, display, can_add, True]
+                x = [name, display, can_add, can_remove]
                 results['used_tags'].append(x)
 
         for excluded in excludes:
