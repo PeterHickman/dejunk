@@ -49,17 +49,17 @@ def purge():
 
 
 @app.route('/tags/')
-@app.route('/tags/<tag>')
-def tags(tag=None):
-    if tag is None:
+@app.route('/tags/<query>')
+def tags(query=None):
+    if query is None:
         query = db.all_tags_and_counts()
-        return render_template('tags.html', selected_menu='tags', tags=query)
+        return render_template('tags.html', selected_menu='tags', query=query)
     else:
         page = get_page(request)
 
-        query = tag_tools.rewrite_query(tag)
+        new_query = tag_tools.rewrite_query(query)
 
-        if query == tag:
+        if new_query == query:
             data = db.photos_by_tags(query, app.config['IMAGES_A_PAGE'], app.config['IMAGES_A_ROW'], page)
 
             return render_template('selected_tags.html', selected_menu='tags', data=data)
@@ -67,7 +67,7 @@ def tags(tag=None):
             ##
             # This redirect is just to clean up the url. It bugs me!
             ##
-            return redirect(url_for('tags', tag=query, page=page))
+            return redirect(url_for('tags', query=new_query, page=page))
 
 
 @app.route('/add_tags', methods=['POST'])
@@ -76,14 +76,14 @@ def add_tags():
 
     page = get_page(request)
 
-    x = tag_tools.rewrite_query(request.form['query'])
+    query = tag_tools.rewrite_query(request.form['query'])
 
     if ',' in request.form['id']:
         # Multiple images
-        return redirect(url_for('tags', tag=x, page=page))
+        return redirect(url_for('tags', tag=query, page=page))
     else:
         # Single image
-        return redirect(url_for('picture', photo_id=request.form['id'], view=x, page=page))
+        return redirect(url_for('picture', photo_id=request.form['id'], query=query, page=page))
 
 
 @app.route('/remove_tag')
@@ -92,16 +92,16 @@ def remove_tag():
 
     page = get_page(request)
 
-    x = tag_tools.rewrite_query(request.args['query'])
+    query = tag_tools.rewrite_query(request.args['query'])
 
-    return redirect(url_for('picture', photo_id=request.args['photo_id'], view=x, page=page))
+    return redirect(url_for('picture', photo_id=request.args['photo_id'], query=query, page=page))
 
 
 @app.route('/picture/<photo_id>')
 def picture(photo_id):
     data = {}
     data['page'] = get_page(request)
-    data['query'] = tag_tools.rewrite_query(request.args['view'])
+    data['query'] = tag_tools.rewrite_query(request.args['query'])
     data['photo'] = db.get_picture(photo_id)
     data['tags'] = db.all_tags_for_photo(photo_id)
 

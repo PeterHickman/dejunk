@@ -8,8 +8,8 @@
 <center>
     <div class="tag_cloud">
         <ul>
-        {% for tag in tags %}
-            <li><a href="{{ url_for('tags', tag = tag[1]) }}">{{ tag[0] }}<span>{{ tag[2] }}</span></a></li>
+        {% for tag in query %}
+            <li><a href="{{ url_for('tags', query = tag[1]) }}">{{ tag[0] }}<span>{{ tag[2] }}</span></a></li>
         {% endfor %}
         </ul>
     </div>

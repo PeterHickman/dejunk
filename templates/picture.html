@@ -2,11 +2,11 @@
 {% block body %}
 <div class="wrapper">
 	<div class="tags_in_use">
-		<a href="{{ url_for('tags', tag=data['query'], page=data['page']) }}">Return to browse</a>
+		<a href="{{ url_for('tags', query=data['query'], page=data['page']) }}">Return to browse</a>
 		<h3>Tagged with</h3>
 		<p class="tag-list">
 			{% for atag in data['tags'] %}
-				<a href="{{ url_for('tags', tag=atag[1]) }}">{{ atag[2] }}</a>
+				<a href="{{ url_for('tags', query=atag[1]) }}">{{ atag[2] }}</a>
 				{% if data['tags']|count > 1 %}
 				<a class="command" href="{{ url_for('remove_tag', photo_id=data['photo'][0], old_tag=atag[1], query=data['query'], page=data['page']) }}">delete</a>
 				{% endif %}

@@ -8,17 +8,17 @@
             <div class="tag">
                 {% if data['used_tags']|count > 1 %}
                 {% if tag[2] == True %}
-                <span class="button plus"><a href="{{ url_for('tags', tag=data['query']+' '+tag[0]) }}">+</a></span>
+                <span class="button plus"><a href="{{ url_for('tags', query=data['query']+' '+tag[0]) }}">+</a></span>
                 {% else %}
                 <span class="button blank">&nbsp</span>
                 {% endif %}
                 {% if tag[3] == True %}
-                <span class="button minus"><a href="{{ url_for('tags', tag=data['query']+' -'+tag[0]) }}">-</a></span>
+                <span class="button minus"><a href="{{ url_for('tags', query=data['query']+' -'+tag[0]) }}">-</a></span>
                 {% else %}
                 <span class="button blank">&nbsp;</span>
                 {% endif %}
                 {% endif %}
-                <a href="{{ url_for('tags', tag=tag[0]) }}">{{ tag[1] }}</a>
+                <a href="{{ url_for('tags', query=tag[0]) }}">{{ tag[1] }}</a>
             </div>
             {% endfor %}
         </span>
@@ -44,9 +44,9 @@
         {% if tab == '...' %}
             <li class="skipped">...</li>
         {% elif tab == data['page'] %}
-            <li class="current"><a href="{{ url_for('tags', tag=data['query'], page=tab) }}">{{ tab }}</a></li>
+            <li class="current"><a href="{{ url_for('tags', query=data['query'], page=tab) }}">{{ tab }}</a></li>
         {% else %}
-            <li><a href="{{ url_for('tags', tag=data['query'], page=tab) }}">{{ tab }}</a></li>
+            <li><a href="{{ url_for('tags', query=data['query'], page=tab) }}">{{ tab }}</a></li>
         {% endif %}
         {% endfor %}
         </ul>
@@ -56,7 +56,7 @@
                     {% for cell in row %}
                     <td>
                         <center>
-                            <a href="{{ url_for('picture', photo_id=cell[0], view=data['query'], page=data['page']) }}">
+                            <a href="{{ url_for('picture', photo_id=cell[0], query=data['query'], page=data['page']) }}">
                                 <img src="{{ url_for('static', filename='thumbs/' + cell[3]) }}" width="125" height="125" alt="Image {{ cell[0] }}" />
                             </a>
                             <input name="photo_{{ cell[0] }}" type="hidden" value="0">
