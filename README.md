@@ -34,3 +34,7 @@ CREATE UNIQUE INDEX index_tags_on_name_and_photo_id ON tags USING btree (name, p
 
 CREATE INDEX index_tags_on_photo_id ON tags USING btree (photo_id);
 ```
+
+## Security
+
+There is none. The site is internal, it does not connect to the internet and neither does the database. Knowing the contents of `settings.py` will not get you anything
