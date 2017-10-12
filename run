@@ -1,0 +1,31 @@
+#!/bin/sh
+
+IMAGE_ROOT=/Volumes/Spare/Flickr
+
+case $1 in
+  web)
+    FLASK_APP=dejunk.py flask run
+    ;;
+  import)
+    python import.py
+    ;;
+  check)
+    python check.py
+    ;;
+  fixup)
+    python fixup.py
+    ;;
+  make)
+    ln -s $IMAGE_ROOT/thumbs/ static/
+    ln -s $IMAGE_ROOT/medium/ static/
+    ln -s $IMAGE_ROOT/images/ static/
+    ;;
+  break)
+    rm static/thumbs
+    rm static/medium
+    rm static/images
+    ;;
+  *)
+    echo "Unknown command: $1"
+    exit 0
+esac
