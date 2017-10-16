@@ -80,7 +80,7 @@ def add_tags():
 
     if ',' in request.form['id']:
         # Multiple images
-        return redirect(url_for('tags', tag=query, page=page))
+        return redirect(url_for('tags', query=query, page=page))
     else:
         # Single image
         return redirect(url_for('picture', photo_id=request.form['id'], query=query, page=page))
