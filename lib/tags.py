@@ -9,8 +9,10 @@ def format(text):
 
     return name, display
 
+
 def display_name(name):
     return name.title().replace('_', ' ')
+
 
 def split_tags(tags):
     """
