@@ -1,0 +1,13 @@
+{% macro paginate(tabs, current_page, page) -%}
+	<ul class="paginate">
+	{% for tab in tabs %}
+	{% if tab == '...' %}
+		<li class="skipped">...</li>
+	{% elif tab == current_page %}
+		<li class="current"><a href="{{ url_for(page, page=tab) }}">{{ tab }}</a></li>
+	{% else %}
+		<li><a href="{{ url_for(page, page=tab) }}">{{ tab }}</a></li>
+	{% endif %}
+	{% endfor %}
+	</ul>
+{%- endmacro %}

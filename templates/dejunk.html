@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% import 'paginate.html' as p %}
 {% block body %}
 {% if data['total_records'] == 0 %}
 	<center id="nomembercontent">
@@ -7,17 +8,7 @@
 {% else %}
 	<center id="content">
 		<p>Set all unclassified images to <a href="#" id="to_ok" class="ok_f">Ok</a> or <a href="#" id="to_junk" class="junk_f">Junk</a></p>
-		<ul class="paginate">
-		{% for tab in data['tabs'] %}
-		{% if tab == '...' %}
-			<li class="skipped">...</li>
-		{% elif tab == data['page'] %}
-			<li class="current"><a href="{{ url_for('dejunk', page=tab) }}">{{ tab }}</a></li>
-		{% else %}
-			<li><a href="{{ url_for('dejunk', page=tab) }}">{{ tab }}</a></li>
-		{% endif %}
-		{% endfor %}
-		</ul>
+		{{ p.paginate(data['tabs'], data['page'], 'dejunk') }}
 		<form action="/dejunk" method="post">
 			<input type="submit" name="commit" value="Submit" data-disable-with="Submit">
 			<input type="hidden" name="page" value="{{ data['page'] }}">
@@ -41,4 +32,3 @@
 	</center>
 {% endif %}
 {% endblock %}
-

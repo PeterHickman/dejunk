@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% import 'paginate.html' as p %}
 {% block body %}
 {% if data['total_records'] == 0 %}
 	<center id="nomembercontent">
@@ -7,17 +8,7 @@
 {% else %}
 	<center id="junk_content">
 		<p>Set all images to <a href="#" id="to_delete" class="junk_f">Delete</a>
-		<ul class="paginate">
-		{% for tab in data['tabs'] %}
-		{% if tab == '...' %}
-			<li class="skipped">...</li>
-		{% elif tab == data['page'] %}
-			<li class="current"><a href="{{ url_for('purge', page=tab) }}">{{ tab }}</a></li>
-		{% else %}
-			<li><a href="{{ url_for('purge', page=tab) }}">{{ tab }}</a></li>
-		{% endif %}
-		{% endfor %}
-		</ul>
+		{{ p.paginate(data['tabs'], data['page'], 'purge') }}
 		<form action="/purge" method="post">
 			<input type="submit" name="commit" value="Submit" data-disable-with="Submit">
 			<input type="hidden" name="page" value="{{ data['page'] }}">
