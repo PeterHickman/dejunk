@@ -44,3 +44,4 @@ There is none. The site is internal, it does not connect to the internet and nei
 0. Reimplement autocomplete
 1. Give focus to the input boxes
 2. Partials/macros for pagination
+3. Upgrade jQuery
