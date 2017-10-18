@@ -38,3 +38,9 @@ CREATE INDEX index_tags_on_photo_id ON tags USING btree (photo_id);
 ## Security
 
 There is none. The site is internal, it does not connect to the internet and neither does the database. Knowing the contents of `settings.py` will not get you anything
+
+## TODO
+
+0. Reimplement autocomplete
+1. Give focus to the input boxes
+2. Partials/macros for pagination
