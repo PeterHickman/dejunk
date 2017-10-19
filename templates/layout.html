@@ -1,3 +1,4 @@
+{% import 'menu.html' as m %}
 <!doctype html>
 <html>
 <head>
@@ -12,41 +13,7 @@
     <script src="{{ url_for('static', filename='app.js') }}"></script>
 </head>
 <body>
-    <ul class="menu">
-        {% if selected_menu == 'status' %}
-        <li><a href="{{ url_for('status') }}" class="selected">Status</a></li>
-        {% else %}
-        <li><a href="{{ url_for('status') }}">Status</a></li>
-        {% endif %}
-
-        {% if selected_menu == 'dejunk' %}
-        <li><a href="{{ url_for('dejunk') }}" class="selected">Dejunk</a></li>
-        {% else %}
-        <li><a href="{{ url_for('dejunk') }}">Dejunk</a></li>
-        {% endif %}
-
-        {% if selected_menu == 'purge' %}
-        <li><a href="{{ url_for('purge') }}" class="selected">Purge</a></li>
-        {% else %}
-        <li><a href="{{ url_for('purge') }}">Purge</a></li>
-        {% endif %}
-
-        {% if selected_menu == 'tags' %}
-        <li><a href="{{ url_for('tags') }}" class="selected">Tags</a></li>
-        {% else %}
-        <li><a href="{{ url_for('tags') }}">Tags</a></li>
-        {% endif %}
-
-        {% if selected_menu == 'admin' %}
-        <li><a href="{{ url_for('admin') }}" class="selected">Admin</a></li>
-        {% else %}
-        <li><a href="{{ url_for('admin') }}">Admin</a></li>
-        {% endif %}
-
-        {% if selected_menu == 'picture' %}
-        <li><a href="#" class="selected">Picture</a></li>
-        {% endif %}
-    </ul>
+    {{ m.menu(selected_menu) }}
     {% block body %}{% endblock %}
 </body>
 </html>
