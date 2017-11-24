@@ -27,5 +27,12 @@ case $1 in
     ;;
   *)
     echo "Unknown command: $1"
+    echo
+    echo "web - run the site on http://localhost:5000"
+    echo "import - import the new images from ${IMAGE_ROOT}/import"
+    echo "check - report problems"
+    echo "fixup - fix problems"
+    echo "make - make the links to where the images are stored"
+    echo "break - remove the links to the images"
     exit 0
 esac
