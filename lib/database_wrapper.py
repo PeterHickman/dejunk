@@ -139,6 +139,10 @@ class DatabaseWrapper(object):
 
         return self._cursor.fetchall()
 
+    def remove_old_duplicate_tags(self):
+        sql = "DELETE FROM tags WHERE name like 'duplicates_%'"
+        self._cursor.execute(sql, {})
+
     def add_tag_to_photo(self, photo_id, tag):
         name, display = tags.format(tag)
 
@@ -174,6 +178,13 @@ class DatabaseWrapper(object):
         self._cursor.execute(sql)
 
         return self._cursor.fetchall()
+
+    def photo_by_filename(self, filename):
+        data = {'filename': filename}
+        sql = "SELECT * FROM photos WHERE filename = %(filename)s"
+        self._cursor.execute(sql, data)
+
+        return self._cursor.fetchone()
 
     def photos_by_tags(self, query, page_size, row_length, page):
         ##

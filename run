@@ -15,6 +15,9 @@ case $1 in
   fixup)
     python fixup.py
     ;;
+  dups)
+    python dups.py $2
+    ;;
   make)
     ln -s $IMAGE_ROOT/thumbs/ static/
     ln -s $IMAGE_ROOT/medium/ static/
