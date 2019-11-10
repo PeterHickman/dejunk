@@ -57,7 +57,7 @@
                     <td>
                         <center>
                             <a href="{{ url_for('picture', photo_id=cell[0], query=data['query'], page=data['page']) }}">
-                                <img src="{{ url_for('static', filename='thumbs/' + cell[3]) }}" width="125" height="125" alt="Image {{ cell[0] }}" />
+                                <img src="{{ url_for('static', filename='thumbs/' + cell[3]) }}" width="125" height="125" alt="Image {{ cell[0] }}" title="File size {{ cell[5] }}" />
                             </a>
                             <input name="photo_{{ cell[0] }}" type="hidden" value="0">
                             <input type="checkbox" value="1" name="photo_{{ cell[0] }}" id="photo_{{ cell[0] }}">

@@ -35,6 +35,11 @@ for photo in db.all_the_photos():
     else:
         source = config.DESTINATION_ROOT + 'images/' + photo[1]
 
+        if photo[4] == None:
+            file_size = os.path.getsize(source)
+            db.set_size(photo[0], file_size)
+            print("Updated size {} to {}".format(source, file_size))
+
         filename = config.DESTINATION_ROOT + 'medium/' + photo[3]
         if not os.path.exists(filename):
             print("Resize {}".format(filename))

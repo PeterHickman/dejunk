@@ -28,7 +28,8 @@ for filename in glob.glob(config.SOURCE_PATH + '*'):
             (path, ext) = os.path.splitext(basename)
             othername = path + '.png'
 
-            db.add_new_photo(basename, othername)
+            file_size = os.path.getsize(filename)
+            db.add_new_photo(basename, othername, file_size)
 
             # Create the medium image
             new_filename = config.DESTINATION_ROOT + 'medium/' + othername

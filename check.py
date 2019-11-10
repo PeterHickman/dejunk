@@ -52,6 +52,10 @@ def has_no_images(photo):
     if number != 0:
         print("{} {} needs it's files removed".format(photo[2], photo[0]))
 
+def has_real_size(photo):
+    if photo[4] == None:
+        print("{} {} has no size".format(photo[0], photo[1]))
+
 ##
 # First we check the database against the filesystem
 ##
@@ -73,6 +77,7 @@ for photo in db.all_the_photos():
     elif photo[2] == 'ok':
         has_some_tags(photo)
         has_all_images(photo)
+        has_real_size(photo)
         image_names.append(photo[1])
         other_names.append(photo[3])
 

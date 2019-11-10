@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+import humanize
 
 from paginate import paginate, group_by
 import tags
@@ -39,10 +40,18 @@ class DatabaseWrapper(object):
 
         return data
 
-    def add_new_photo(self, filename, othername):
-        data = {'filename': filename, 'othername': othername, 'status': 'unknown'}
+    def add_new_photo(self, filename, othername, file_size):
+        data = {'filename': filename, 'othername': othername, 'status': 'unknown', 'file_size': file_size}
 
-        sql = "INSERT INTO photos (filename, othername, status) VALUES (%(filename)s, %(othername)s, %(status)s);"
+        sql = "INSERT INTO photos (filename, othername, status. file_size) VALUES (%(filename)s, %(othername)s, %(status)s, %(file_size)s);"
+        self._cursor.execute(sql, data)
+
+    def set_size(self, id, file_size):
+        """
+        Used when fixing up errors in the data
+        """
+        data = {'id': id, 'file_size': file_size}
+        sql = "UPDATE photos SET file_size = %(file_size)s WHERE id = %(id)s"
         self._cursor.execute(sql, data)
 
     def photos_with_status(self, status, page_size, row_length, page):
@@ -241,6 +250,9 @@ class DatabaseWrapper(object):
             rows = self._cursor.fetchall()
         else:
             rows = []
+
+        for row in rows:
+            row.append(humanize.naturalsize(row[4]))
 
         results['rows'] = group_by(rows, row_length)
 
