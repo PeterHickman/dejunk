@@ -13,7 +13,8 @@ CREATE TABLE photos (
     id serial PRIMARY KEY,
     filename text,
     status character varying(10) DEFAULT 'unknown'::character varying,
-    othername text
+    othername text,
+    file_size integer
 );
 
 
