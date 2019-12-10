@@ -43,7 +43,7 @@ class DatabaseWrapper(object):
     def add_new_photo(self, filename, othername, file_size):
         data = {'filename': filename, 'othername': othername, 'status': 'unknown', 'file_size': file_size}
 
-        sql = "INSERT INTO photos (filename, othername, status. file_size) VALUES (%(filename)s, %(othername)s, %(status)s, %(file_size)s);"
+        sql = "INSERT INTO photos (filename, othername, status, file_size) VALUES (%(filename)s, %(othername)s, %(status)s, %(file_size)s);"
         self._cursor.execute(sql, data)
 
     def set_size(self, id, file_size):
@@ -108,6 +108,10 @@ class DatabaseWrapper(object):
                     self.add_tag_to_photo(photo_id, 'untagged')
 
         return page
+
+    def set_to_deleted(self, photo_id):
+        sql = "UPDATE photos SET status = %(status)s WHERE id = %(photo_id)s"
+        self._cursor.execute(sql, {'status': 'deleted', 'photo_id': photo_id})
 
     def photos_to_delete(self, form):
         page = int(form['page'])
