@@ -93,6 +93,11 @@ class DatabaseWrapper(object):
 
         return results
 
+    def purged_photos():
+        sql = "SELECT id,  FROM photos WHERE status = %(status)s ORDER BY id DESC"
+        self._cursor.execute(sql, ('junk',))
+        return self._cursor.fetchall()
+
     def classify_unknown(self, form):
         page = int(form['page'])
 

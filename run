@@ -3,20 +3,23 @@
 IMAGE_ROOT=/Volumes/Spare/Flickr
 
 case $1 in
-  web)
+  web|w)
     FLASK_APP=dejunk.py flask run
     ;;
-  import)
+  import|i)
     python import.py
     ;;
-  check)
+  check|c)
     python check.py
     ;;
-  fixup)
+  fixup|f)
     python fixup.py
     ;;
-  dups)
+  dups|d)
     python dups.py $2
+    ;;
+  purge|p)
+    python purge.py
     ;;
   make)
     ln -s $IMAGE_ROOT/thumbs/ static/
@@ -35,6 +38,7 @@ case $1 in
     echo "import - import the new images from ${IMAGE_ROOT}/import"
     echo "check - report problems"
     echo "fixup - fix problems"
+    echo "purge - remove all junk images"
     echo "make - make the links to where the images are stored"
     echo "break - remove the links to the images"
     exit 0
