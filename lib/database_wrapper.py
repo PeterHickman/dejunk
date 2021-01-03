@@ -40,12 +40,6 @@ class DatabaseWrapper(object):
 
         return data
 
-    def add_new_photo(self, filename, othername, file_size):
-        data = {'filename': filename, 'othername': othername, 'status': 'unknown', 'file_size': file_size}
-
-        sql = "INSERT INTO photos (filename, othername, status, file_size) VALUES (%(filename)s, %(othername)s, %(status)s, %(file_size)s);"
-        self._cursor.execute(sql, data)
-
     def set_size(self, id, file_size):
         """
         Used when fixing up errors in the data
@@ -114,10 +108,6 @@ class DatabaseWrapper(object):
 
         return page
 
-    def set_to_deleted(self, photo_id):
-        sql = "UPDATE photos SET status = %(status)s WHERE id = %(photo_id)s"
-        self._cursor.execute(sql, {'status': 'deleted', 'photo_id': photo_id})
-
     def photos_to_delete(self, form):
         page = int(form['page'])
 
@@ -132,21 +122,6 @@ class DatabaseWrapper(object):
                 self._cursor.execute(sql, {'photo_id': photo_id})
 
         return page
-
-    def all_the_photos(self):
-        """
-        Get all the photos for the utilities
-        """
-        sql = "SELECT * FROM photos ORDER BY id DESC"
-        self._cursor.execute(sql)
-
-        return self._cursor.fetchall()
-
-    def all_tags_for_photo(self, photo_id):
-        sql = "SELECT * FROM tags WHERE photo_id = %(photo_id)s"
-        self._cursor.execute(sql, {'photo_id': photo_id})
-
-        return self._cursor.fetchall()
 
     def remove_old_duplicate_tags(self):
         sql = "DELETE FROM tags WHERE name like 'duplicates_%'"
@@ -168,10 +143,6 @@ class DatabaseWrapper(object):
 
         sql = "DELETE FROM tags WHERE photo_id = %(photo_id)s AND name = %(name)s"
         self._cursor.execute(sql, {'photo_id': photo_id, 'name': name})
-
-    def remove_all_tags_from_photo(self, photo_id):
-        sql = "DELETE FROM tags WHERE photo_id = %(photo_id)s"
-        self._cursor.execute(sql, {'photo_id': photo_id})
 
     def add_tags_to_photos(self, req):
         photo_ids = [int(x) for x in req['id'].split(',')]
