@@ -1,19 +1,19 @@
-import re
+class Tags
+  def self.format(text)
+    clean_tag = text.gsub(/\s+/, ' ').downcase.strip
 
-
-def format(text):
-    clean_tag = re.sub("\s+", " ", text.lower().strip())
-
-    name = clean_tag.replace(' ', '_')
+    name = clean_tag.gsub(' ', '_')
     display = display_name(clean_tag)
 
-    return name, display
+    [name, display]
+  end
 
+  def self.display_name(name)
+    name.split(' ').map(&:capitalize).join('_')
+  end
+end
 
-def display_name(name):
-    return name.title().replace('_', ' ')
-
-
+__END__
 def split_tags(tags):
     """
     Given a string of space separated tags, group them into includes and
