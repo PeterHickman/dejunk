@@ -40,14 +40,6 @@ class DatabaseWrapper(object):
 
         return data
 
-    def set_size(self, id, file_size):
-        """
-        Used when fixing up errors in the data
-        """
-        data = {'id': id, 'file_size': file_size}
-        sql = "UPDATE photos SET file_size = %(file_size)s WHERE id = %(id)s"
-        self._cursor.execute(sql, data)
-
     def photos_with_status(self, status, page_size, row_length, page):
         ##
         # 'data' holds the values used when we call the database
@@ -127,16 +119,6 @@ class DatabaseWrapper(object):
         sql = "DELETE FROM tags WHERE name like 'duplicates_%'"
         self._cursor.execute(sql, {})
 
-    def add_tag_to_photo(self, photo_id, tag):
-        name, display = tags.format(tag)
-
-        sql = "SELECT * FROM tags WHERE photo_id = %(photo_id)s AND name = %(name)s"
-        self._cursor.execute(sql, {'photo_id': photo_id, 'name': name})
-        row = self._cursor.fetchone()
-
-        if row is None:
-            sql = "INSERT INTO tags (photo_id, name, display) VALUES (%(photo_id)s, %(name)s, %(display)s)"
-            self._cursor.execute(sql, {'photo_id': photo_id, 'name': name, 'display': display})
 
     def remove_tag_from_photo(self, photo_id, tag):
         name, display = tags.format(tag)
