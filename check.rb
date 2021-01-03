@@ -59,8 +59,6 @@ image_names = []
 other_names = []
 
 da.all_the_photos.each do |photo|
-  # {:id=>28409, :filename=>"10692864604.jpg", :status=>"deleted", :othername=>"10692864604.png", :file_size=>nil}
-
   case photo[:status]
   when 'deleted'
     has_no_tags(da, photo)
@@ -87,17 +85,17 @@ end
 Dir["#{config['destination_root']}images/*"].each do |filename|
   basename = File.basename(filename)
 
-  print("The image #{basename} is not in the database") unless image_names.include?(basename)
+  puts("The image #{basename} is not in the database") unless image_names.include?(basename)
 end
 
 Dir["#{config['destination_root']}medium/*"].each do |filename|
   basename = File.basename(filename)
 
-  print("The image #{basename} is not in the database") unless other_names.include?(basename)
+  puts("The medium #{basename} is not in the database") unless other_names.include?(basename)
 end
 
 Dir["#{config['destination_root']}thumbs/*"].each do |filename|
   basename = File.basename(filename)
 
-  print("The image #{basename} is not in the database") unless other_names.include?(basename)
+  puts("The thumb #{basename} is not in the database") unless other_names.include?(basename)
 end
