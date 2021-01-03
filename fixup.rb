@@ -51,14 +51,10 @@ da.all_the_photos.each do |photo|
       end
 
       filename = "#{config['destination_root']}medium/#{photo[:othername]}"
-      unless File.exist?(filename)
-        resize(source, filename, 800)
-      end
+      resize(source, filename, 800) unless File.exist?(filename)
 
       filename = "#{config['destination_root']}thumbs/#{photo[:othername]}"
-      unless File.exist?(filename)
-        resize(source, filename, 125)
-      end
+      resize(source, filename, 125) unless File.exist?(filename)
 
       number = da.all_tags_for_photo(photo[:id]).size
       if number == 0
