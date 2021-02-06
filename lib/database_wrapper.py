@@ -33,21 +33,6 @@ class DatabaseWrapper(object):
         self._cursor.execute(sql, ('junk',))
         return self._cursor.fetchall()
 
-    def photos_to_delete(self, form):
-        page = int(form['page'])
-
-        for arg in form:
-            if arg.startswith('photo_'):
-                photo_id = int(arg[6:])
-
-                sql = "UPDATE photos SET status = %(status)s WHERE id = %(photo_id)s"
-                self._cursor.execute(sql, {'status': 'deleted', 'photo_id': photo_id})
-
-                sql = "DELETE FROM tags where photo_id = %(photo_id)s"
-                self._cursor.execute(sql, {'photo_id': photo_id})
-
-        return page
-
     def remove_old_duplicate_tags(self):
         sql = "DELETE FROM tags WHERE name like 'duplicates_%'"
         self._cursor.execute(sql, {})

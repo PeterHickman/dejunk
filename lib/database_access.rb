@@ -175,4 +175,11 @@ class DatabaseAccess
       add_tag_to_photo(photo_id, 'untagged') if status == 'ok'
     end
   end
+
+  def photos_to_delete(photo_ids)
+    photo_ids.each do |photo_id, status|
+      @db[:photos].where(id: photo_id).update(status: 'deleted')
+      @db[:tags].where(photo_id: photo_id).delete
+    end
+  end
 end
