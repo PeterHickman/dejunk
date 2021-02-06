@@ -1,4 +1,5 @@
 require 'tags'
+require 'paginate'
 
 class DatabaseAccess
   def initialize(dcs)
@@ -37,5 +38,141 @@ class DatabaseAccess
     return if row
 
     @db[:tags].insert(photo_id: photo_id, name: name, display: display)
+  end
+
+  def status_information
+    data = { 'ok' => 0, 'junk' => 0, 'unknown' => 0, 'total' => 0 }
+
+    rows = @db['SELECT status, count(*) FROM photos GROUP BY status']
+
+    rows.each do |row|
+      next if row[:status] == 'deleted'
+
+      data[row[:status]] += row[:count]
+      data['total'] += row[:count]
+    end
+
+    data
+  end
+
+  def photos_with_status(status, page_size, row_length, page)
+    ##
+    # 'data' holds the values used when we call the database
+    ##
+    data = { limit: page_size, status: status }
+
+    ##
+    # This is the information we will be returning
+    ##
+    results = {}
+
+    ##
+    # Total number of records
+    ##
+    total_records = @db[:photos].where(status: status).count
+    results['total_records'] = total_records
+
+    ##
+    # The tabs for pagination and the revised 'page'
+    ##
+    tabs, page = paginate(results['total_records'], page_size, page)
+
+    results['tabs'] = tabs
+    results['page'] = page
+
+    data['offset'] = (page - 1) * page_size
+
+    ##
+    # The data for the page we are looking at
+    ##
+    rows = @db[:photos].select(:id, :othername).where(status: status).order(:id).limit(page_size, data['offset']).all
+    results['rows'] = group_by(rows, row_length)
+
+    return results
+  end
+
+  def all_tags_and_counts
+    @db['SELECT DISTINCT(display), name, COUNT(*) FROM tags GROUP BY display, name ORDER BY display'].all
+  end
+
+  def photos_by_tags(query, page_size, row_length, page)
+    ##
+    # This is the information we will be returning
+    ##
+    results = {}
+    results['query'] = Tags.rewrite_query(query)
+    results['describe'] = Tags.describe(query)
+
+    ##
+    # Total number of records
+    ##
+    sql = Tags.tagged_with(query, true)
+    row = @db[sql].first
+    results['total_records'] = row[:count]
+
+    ##
+    # The tabs for pagination and the revised 'page'
+    ##
+    tabs, page = paginate(results['total_records'], page_size, page)
+    results['tabs'] = tabs
+    results['page'] = page
+
+    ##
+    # Get all the photos that this query matches
+    ##
+    sql = Tags.tagged_with(query, false)
+    rows = @db[sql].all
+    photo_ids = rows.map { |cell| cell[:photo_id] }
+
+    ##
+    # Get all the tags associated with the photos
+    ##
+    includes, excludes = Tags.split_tags(query)
+
+    results['used_tags'] = []
+
+    if photo_ids.any?
+      sql = "SELECT DISTINCT(name) FROM tags WHERE photo_id IN (#{photo_ids.join(',')})"
+      rows = @db[sql].all
+      rows.each do |row|
+        name, display = Tags.format(row[:name])
+        can_add = true
+        can_remove = true
+        if includes.include?(name)
+          can_add = false
+          if includes.size == 1
+            can_remove = false
+          end
+        end
+
+        results['used_tags'] << [name, display, can_add, can_remove]
+      end
+    end
+
+    ##
+    # Get the photos just on this page
+    ##
+    page_start = (page - 1) * page_size
+    page_end = page_start + page_size
+
+    photo_ids_on_page = photo_ids[page_start ... page_end]
+
+    if photo_ids.any?
+        sql = "SELECT * FROM photos WHERE id IN (#{photo_ids_on_page.join(',')}) ORDER BY id DESC"
+        rows = @db[sql].all
+    else
+      rows = []
+    end
+
+    results['rows'] = group_by(rows, row_length)
+
+    results
+  end
+
+  def classify_unknown(photo_ids)
+    photo_ids.each do |photo_id, status|
+      @db[:photos].where(id: photo_id).update(status: status)
+      add_tag_to_photo(photo_id, 'untagged') if status == 'ok'
+    end
   end
 end

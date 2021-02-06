@@ -1,3 +1,5 @@
+require 'set'
+
 class Tags
   def self.format(text)
     clean_tag = text.gsub(/\s+/, ' ').downcase.strip
@@ -11,89 +13,90 @@ class Tags
   def self.display_name(name)
     name.split(' ').map(&:capitalize).join('_')
   end
-end
 
-__END__
-def split_tags(tags):
-    """
-    Given a string of space separated tags, group them into includes and
-    excludes based on a '-' prefix for exclude
-    """
-
-    includes = []
-    excludes = []
-
-    for tag in tags.split():
-        if tag.startswith('-'):
-            if tag[1:] not in excludes:
-                excludes.append(tag[1:])
-        else:
-            if tag not in includes:
-                includes.append(tag)
-
-    for tag in includes:
-        if tag in excludes:
-            excludes.remove(tag)
-            includes.remove(tag)
-
-    return includes, excludes
-
-
-def rewrite_query(tags):
+  def self.rewrite_query(tags)
     includes, excludes = split_tags(tags)
 
-    for tag in excludes:
-        includes.append("-{}".format(tag))
+    excludes.each do |tag|
+      includes << "-#{tag}"
+    end
 
-    return " ".join(includes)
+    includes.to_a.join(' ')
+  end
 
+  def self.split_tags(tags)
+    # Given a string of space separated tags, group them into includes and
+    # excludes based on a '-' prefix for exclude
 
-def describe(tags):
+    includes = Set.new
+    excludes = Set.new
+
+    tags.split(/\s+/).each do |tag|
+      if tag.index('-') == 0
+        excludes << tag[1..-1]
+      else
+        includes << tag
+      end
+    end
+
+    includes.each do |tag|
+      if excludes.include?(tag)
+        includes.delete(tag)
+        excludes.delete(tag)
+      end
+    end
+
+    [includes.to_a, excludes.to_a]
+  end
+
+  def self.describe(tags)
     includes, excludes = split_tags(tags)
 
     text = ''
-    if len(includes) > 0:
-        text += "Includes: {}".format(', '.join([display_name(name) for name in includes]))
 
-    if len(excludes) > 0:
-        if len(text) > 0:
-            text += ". "
+    if includes.any?
+      text += "Includes: #{includes.each { |name| display_name(name) }.join(', ')}"
+    end
 
-        text += "Excludes: {}".format(', '.join([display_name(name) for name in excludes]))
+    if excludes.any?
+      text += '. ' unless text == ''
+      text += "Excludes: #{excludes.each { |name| display_name(name) }.join(', ')}"
+    end
 
-    return text
+    text
+  end
 
-
-def tagged_with(tags, counted):
-    """
-    Return the SQL required to get the photos matching the tag query
-    """
+  def self.tagged_with(tags, counted)
+    # Return the SQL required to get the photos matching the tag query
 
     includes, excludes = split_tags(tags)
 
-    if counted:
-        select = 'COUNT(*)'
-    else:
-        select = 'photo_id'
+    if counted
+      select = 'COUNT(*)'
+    else
+      select = 'photo_id'
+    end
 
     sql = ''
 
-    if len(includes) > 0:
-        sql += "SELECT {} FROM tags WHERE name IN ('{}')".format(select, "', '".join(includes))
+    if includes.any?
+      sql += "SELECT #{select} FROM tags WHERE name IN ('#{includes.join("', '")}')"
+      if excludes.any?
+        sql += " AND photo_id NOT IN (SELECT photo_id FROM tags WHERE name IN ('#{excludes.join("', '")}'))"
+      end
+      if includes.size > 1
+        sql += " GROUP BY photo_id HAVING COUNT(photo_id) = #{includes.size}"
+      end
+    elsif excludes.any?
+      sql += "SELECT #{select} FROM tags WHERE photo_id NOT IN (SELECT photo_id FROM tags WHERE name IN ('#{excludes.join("', '")}'))"
+    else
+      sql += "SELECT #{select} FROM tags"
+    end
 
-        if len(excludes) > 0:
-            sql += " AND photo_id NOT IN (SELECT photo_id FROM tags WHERE name IN ('{}'))".format("', '".join(excludes))
+    if counted == false
+      sql += ' ORDER BY photo_id DESC'
+    end
 
-        if len(includes) > 1:
-            sql += " GROUP BY photo_id HAVING COUNT(photo_id) = {}".format(len(includes))
-
-    elif len(excludes) > 0:
-        sql += "SELECT {} FROM tags WHERE photo_id NOT IN (SELECT photo_id FROM tags WHERE name IN ('{}'))".format(select, "', '".join(excludes))
-
-    else:
-        sql += "SELECT {} FROM tags".format(select)
-
-    if counted is False:
-        sql += " ORDER BY photo_id DESC"
-
-    return sql
+    sql
+  end
+end
