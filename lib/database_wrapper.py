@@ -60,13 +60,6 @@ class DatabaseWrapper(object):
 
         return self._cursor.fetchone()
 
-    def get_picture(self, photo_id):
-        sql = "SELECT * FROM photos WHERE id = %(photo_id)s"
-        self._cursor.execute(sql, {'photo_id': photo_id})
-
-        picture = self._cursor.fetchone()
-        return picture
-
     def convert_junk(self):
         photo_ids = self._photos_by_one_tag('junk')
 

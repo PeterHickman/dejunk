@@ -182,4 +182,8 @@ class DatabaseAccess
       @db[:tags].where(photo_id: photo_id).delete
     end
   end
+
+  def get_picture(photo_id)
+    @db[:photos].where(id: photo_id).first
+  end
 end
