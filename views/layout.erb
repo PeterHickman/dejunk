@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dejunk Flickr Images</title>
+  <link rel="shortcut icon" href="/favicon.ico"/>
+  <link rel="stylesheet" type="text/css" href="/screen.css"/>
+
+  <script src="/jquery-3.2.1.min.js"></script>
+  <script src="/app.js"></script>
+</head>
+<body>
+  <ul class="menu">
+    <% if selected_menu == 'status' %>
+    <li><a href="/" class="selected">Status</a></li>
+    <% else %>
+    <li><a href="/">Status</a></li>
+    <% end %>
+
+    <% if selected_menu == 'dejunk' %>
+    <li><a href="dejunk" class="selected">Dejunk</a></li>
+    <% else %>
+    <li><a href="dejunk">Dejunk</a></li>
+    <% end %>
+
+    <% if selected_menu == 'purge' %>
+    <li><a href="purge" class="selected">Purge</a></li>
+    <% else %>
+    <li><a href="purge">Purge</a></li>
+    <% end %>
+
+    <% if selected_menu == 'tags' %>
+    <li><a href="tags" class="selected">Tags</a></li>
+    <% else %>
+    <li><a href="tags">Tags</a></li>
+    <% end %>
+
+    <% if selected_menu == 'admin' %>
+    <li><a href="admin" class="selected">Admin</a></li>
+    <% else %>
+    <li><a href="admin">Admin</a></li>
+    <% end %>
+
+    <% if selected_menu == 'picture' %>
+    <li><a href="#" class="selected">Picture</a></li>
+    <% end %>
+  </ul>
+  <%= yield %>
+</body>
+</html>

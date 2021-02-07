@@ -1,0 +1,40 @@
+<% if data['total_records'] == 0 %>
+	<center id="nomembercontent">
+		<h1>There are no unclassified images</h1>
+	</center>
+<% else %>
+	<center id="content">
+		<p>Set all unclassified images to <a href="#" id="to_ok" class="ok_f">Ok</a> or <a href="#" id="to_junk" class="junk_f">Junk</a></p>
+    <ul class="paginate">
+    <% data['tabs'].each do |tab| %>
+    <% if tab == '...' %>
+    	<li class="skipped">...</li>
+    <% elsif tab == data['page'] %>
+    	<li class="current"><a href="/dejunk?page=<%= tab %>"><%= tab %></a></li>
+    <% else %>
+    	<li><a href="/dejunk?page=<%= tab %>"><%= tab %></a></li>
+    <% end %>
+    <% end %>
+    </ul>
+		<form action="/dejunk" method="post">
+			<input type="submit" name="commit" value="Submit" data-disable-with="Submit">
+			<input type="hidden" name="page" value="<%= data['page'] %>">
+			<table>
+      <% c = get_cycle('odd', 'even') %>
+			<% data['rows'].each do |row| %>
+				<tr>
+				<% row.each do |cell| %>
+					<td class="<%= c.get %>">
+						<center>
+							<img src="/thumbs/<%= cell[:othername] %>" width="125" height="125" alt="Image <%= cell[:id] %>" />
+							Ok <input id="photo_<%= cell[:id] %>_ok" type="radio" name="photo_<%= cell[:id] %>" value="ok"/>
+							Junk <input id="photo_<%= cell[:id] %>_junk" type="radio" name="photo_<%= cell[:id] %>" value="junk"/>
+						</center>
+					</td>
+				<% end %>
+      </tr>
+			<% end %>
+			</table>
+		</form>
+	</center>
+<% end %>

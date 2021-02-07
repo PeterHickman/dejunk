@@ -1,0 +1,42 @@
+<% if data['total_records'] == 0 %>
+	<center id="nomembercontent">
+		<h1>There are no images to purge</h1>
+	</center>
+<% else %>
+	<center id="junk_content">
+		<p>Set all images to <a href="#" id="to_delete" class="junk_f">Delete</a>
+
+    <ul class="paginate">
+    <% data['tabs'].each do |tab| %>
+    <% if tab == '...' %>
+    	<li class="skipped">...</li>
+    <% elsif tab == data['page'] %>
+    	<li class="current"><a href="/purge?page=<%= tab %>"><%= tab %></a></li>
+    <% else %>
+    	<li><a href="/purge?page=<%= tab %>"><%= tab %></a></li>
+    <% end %>
+    <% end %>
+    </ul>
+
+		<form action="/purge" method="post">
+			<input type="submit" name="commit" value="Submit" data-disable-with="Submit">
+			<input type="hidden" name="page" value="<%= data['page'] %>">
+			<table>
+      <% c = get_cycle('odd', 'even') %>
+			<% data['rows'].each do |row| %>
+				<tr>
+				<% row.each do |cell| %>
+					<td class="<%= c.get %>">
+						<center>
+							<img src="/thumbs/<%= cell[:othername] %>" width="125" height="125" alt="Image <%= cell[:id] %>" />
+							Delete <%= cell[:id] %> <input type="checkbox" value="1" name="photo_<%= cell[:id] %>" id="photo_<%= cell[:id] %>">
+						</center>
+					</td>
+				<% end %>
+				</tr>
+			<% end %>
+			</table>
+		</form>
+	</center>
+<% end %>
+

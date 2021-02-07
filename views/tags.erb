@@ -1,0 +1,15 @@
+<% if query == [] %>
+<center>
+    <h1>There are no tagged images</h1>
+</center>
+<% else %>
+<center>
+    <div class="tag_cloud">
+        <ul>
+        <% query.each do |tag| %>
+            <li><a href="/tags?query=<%= tag[:name] %>"><%= tag[:display] %><span><%= tag[:count] %></span></a></li>
+        <% end %>
+        </ul>
+    </div>
+</center>
+<% end %>

@@ -1,0 +1,11 @@
+<ul class="paginate">
+<% tabs.each do |tab| %>
+<% if tab == '...' %>
+	<li class="skipped">...</li>
+<% elsif tab == current_page %>
+	<li class="current"><a href="/<%= page %>?page=<%= tab %>"><%= tab %></a></li>
+<% else %>
+	<li><a href="/<%= page %>?page=<%= tab %>"><%=> tab %></a></li>
+<% end %>
+<% end %>
+</ul>

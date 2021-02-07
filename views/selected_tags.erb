@@ -1,0 +1,70 @@
+<div class="wrapper">
+    <div class="tags_in_use">
+        <h3>Tags in use</h3>
+        <span class="selected_tags">
+            <% for tag in data['used_tags'] %>
+            <div class="tag">
+                <% if data['used_tags'].size > 1 %>
+                <% if tag[2] == true %>
+                <span class="button plus"><a href="/tags?query=<%= data['query'] %> <%= tag[0] %>">+</a></span>
+                <% else %>
+                <span class="button blank">&nbsp</span>
+                <% end %>
+                <% if tag[3] == true %>
+                <span class="button minus"><a href="/tags?query=<%= data['query'] %> -<%= tag[0] %>">-</a></span>
+                <% else %>
+                <span class="button blank">&nbsp;</span>
+                <% end %>
+                <% end %>
+                <a href="/tags?query=<%= tag[0] %>"><%= tag[1] %></a>
+            </div>
+            <% end %>
+        </span>
+        <h3>Add tags to selected items</h3>
+        <form action="/add_tags" accept-charset="UTF-8" method="post">
+            <input type="hidden" name="id" id="ids" value="">
+            <input type="hidden" name="query" value="<%= data['query'] %>">
+            <input type="hidden" name="page" value="<%= data['page'] %>">
+            <input type="text" name="new_tag" size="15" id="new_tag" autofocus>
+            <input type="submit" name="commit" value="add" onclick="return tag_multiple_items();" data-disable-with="add">
+        </form>
+    </div>
+
+    <div class="photos_tagged">
+        <h3><%= data['describe'] %></h3>
+        <% if data['total_records'] == 0 %>
+            <center>
+                <h2>There are no images to show</h2>
+            </center>
+        <% else %>
+        <ul class="paginate">
+        <% for tab in data['tabs'] %>
+        <% if tab == '...' %>
+            <li class="skipped">...</li>
+        <% elsif tab == data['page'] %>
+            <li class="current"><a href="/tags?query=<%= data['query'] %>&page=<%= tab %>"><%= tab %></a></li>
+        <% else %>
+            <li><a href="/tags?query=<%= data['query'] %>&page=<%= tab %>"><%= tab %></a></li>
+        <% end %>
+        <% end %>
+        </ul>
+            <table>
+                <% for row in data['rows'] %>
+                <tr>
+                    <% for cell in row %>
+                    <td>
+                        <center>
+                            <a href="/picture?photo_id=<%= cell[:id] %>&query=<%= data['query'] %>&page=<%= data['page'] %>">
+                                <img src="/thumbs/<%= cell[:othername] %>" width="125" height="125" alt="Image <%= cell[:id] %>" title="File size <%= human(cell[:file_size]) %>" />
+                            </a>
+                            <input name="photo_<%= cell[:id] %>" type="hidden" value="0">
+                            <input type="checkbox" value="1" name="photo_<%= cell[:id] %>" id="photo_<%= cell[:id] %>">
+                        </center>
+                    </td>
+                    <% end %>
+                </tr>
+            <% end %>
+            </table>
+        <% end %>
+    </div>
+</div>
