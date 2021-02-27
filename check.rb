@@ -57,12 +57,18 @@ da = DatabaseAccess.new(config['dcs'])
 
 image_names = []
 other_names = []
+deleted_names = []
+deleted_other_names = []
+
+puts '=== Reading the database'
 
 da.all_the_photos.each do |photo|
   case photo[:status]
   when 'deleted'
     has_no_tags(da, photo)
     has_no_images(config, photo)
+    deleted_names << photo[:filename]
+    deleted_other_names << photo[:othername]
   when 'junk'
     has_no_tags(da, photo)
     has_all_images(config, photo)
@@ -82,20 +88,44 @@ da.all_the_photos.each do |photo|
   end
 end
 
+puts '=== Checking files in images'
+
 Dir["#{config['destination_root']}images/*"].each do |filename|
   basename = File.basename(filename)
 
-  puts("The image #{basename} is not in the database") unless image_names.include?(basename)
+  if image_names.include?(basename)
+    # We know this one
+  elsif deleted_names.include?(basename)
+    puts("The image #{basename} should be deleted database")
+  else
+    # puts("The image #{basename} is not in the database")
+  end
 end
+
+puts '=== Checking files in medium'
 
 Dir["#{config['destination_root']}medium/*"].each do |filename|
   basename = File.basename(filename)
 
-  puts("The medium #{basename} is not in the database") unless other_names.include?(basename)
+  if other_names.include?(basename)
+    # We know this one
+  elsif deleted_other_names.include?(basename)
+    puts("The medium #{basename} should be deleted database")
+  else
+    # puts("The medium #{basename} is not in the database")
+  end
 end
+
+puts '=== Checking files in thumbs'
 
 Dir["#{config['destination_root']}thumbs/*"].each do |filename|
   basename = File.basename(filename)
 
-  puts("The thumb #{basename} is not in the database") unless other_names.include?(basename)
+  if other_names.include?(basename)
+    # We know this one
+  elsif deleted_other_names.include?(basename)
+    puts("The thumb #{basename} should be deleted database")
+  else
+    # puts("The thumb #{basename} is not in the database")
+  end
 end

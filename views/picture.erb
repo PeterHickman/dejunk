@@ -6,7 +6,7 @@
 			<% data['tags'].each do |atag| %>
 				<a href="/tags?query=<%= atag[:name] %>"><%= atag[:display] %></a>
 				<% if data['tags'].size > 1 %>
-				<a class="command" href="/remove_tag?photo_id=<%= data['photo'][:id] %>&old_tag=<%= atag[:name] %>&query=<%= data['query'] %>page<%= data['page'] %>">delete</a>
+				<a class="command" href="/remove_tag?photo_id=<%= data['photo'][:id] %>&old_tag=<%= atag[:name] %>&query=<%= data['query'] %>&page<%= data['page'] %>">delete</a>
 				<% end %>
 				<br />
 			<% end %>

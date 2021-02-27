@@ -186,4 +186,47 @@ class DatabaseAccess
   def get_picture(photo_id)
     @db[:photos].where(id: photo_id).first
   end
+
+  def add_tags_to_photos(photo_ids, tags)
+    photo_ids.each do |photo_id|
+      tags.each do |tag|
+        add_tag_to_photo(photo_id, tag)
+      end
+    end
+  end
+
+  def remove_tag_from_photo(photo_id, tag)
+    name, display = Tags.format(tag)
+
+    @db[:tags].where(photo_id: photo_id, name: name).delete
+  end
+
+  def photos_by_one_tag(name)
+    @db[:tags].where(name: name).select(:photo_id).all
+  end
+
+  def convert_junk
+    photo_ids = photos_by_one_tag('junk').map { |p| p[:photo_id] }
+
+    @db[:photos].where(id: photo_ids).update(status: 'junk')
+    @db[:tags].where(photo_id: photo_ids).delete
+
+    photo_ids.size
+  end
+
+  def remove_surplus
+    photo_ids = photos_by_one_tag('untagged').map { |p| p[:photo_id] }
+
+    counter = 0
+
+    photo_ids.each do |photo_id|
+      tags = all_tags_for_photo(photo_id)
+      if tags.size > 1
+        @db[:tags].where(name: 'untagged', photo_id: photo_id).delete
+        counter += 1
+      end
+    end
+
+    counter
+  end
 end

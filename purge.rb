@@ -17,7 +17,7 @@ config = YAML.load_file('config.yaml')
 da = DatabaseAccess.new(config['dcs'])
 
 da.all_the_photos.each do |photo|
-  if photo[:status] == 'junk'
+  if photo[:status] == 'deleted'
     filename = "#{config['destination_root']}images/#{photo[:filename]}"
 
     if File.exist?(filename)
@@ -25,14 +25,14 @@ da.all_the_photos.each do |photo|
       File.delete(filename)
     end
 
-    filename = "#{config['destination_root']}medium/#{photo[othername]}"
+    filename = "#{config['destination_root']}medium/#{photo[:othername]}"
 
     if File.exist?(filename)
       puts("Removing #{filename}")
       File.delete(filename)
     end
 
-    filename = "#{config['destination_root']}thumbs/#{photo[othername]}"
+    filename = "#{config['destination_root']}thumbs/#{photo[:othername]}"
 
     if File.exist?(filename)
       puts("Removing #{filename}")

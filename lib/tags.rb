@@ -11,7 +11,7 @@ class Tags
   end
 
   def self.display_name(name)
-    name.split(' ').map(&:capitalize).join('_')
+    name.split(' ').map(&:capitalize).join(' ')
   end
 
   def self.rewrite_query(tags)
