@@ -22,8 +22,10 @@ da = DatabaseAccess.new(config['dcs'])
 da.all_the_photos.each do |photo|
   if photo[:status] == 'deleted'
     filename = "#{config['destination_root']}images/#{photo[:filename]}"
+    delfilen = "#{config['destination_root']}deleted/#{photo[:filename]}"
     if File.exist?(filename)
       puts("Removing #{filename}")
+      FileUtils.cp(filename, delfilen)
       File.delete(filename)
     end
 
