@@ -24,20 +24,20 @@ da.all_the_photos.each do |photo|
     filename = "#{config['destination_root']}images/#{photo[:filename]}"
     delfilen = "#{config['destination_root']}deleted/#{photo[:filename]}"
     if File.exist?(filename)
-      puts("Removing #{filename}")
+      puts("Moving #{filename}")
       FileUtils.cp(filename, delfilen)
       File.delete(filename)
     end
 
     filename = "#{config['destination_root']}medium/#{photo[:othername]}"
     if File.exist?(filename)
-      puts("Removing #{filename}")
+      puts("Deleting #{filename}")
       File.delete(filename)
     end
 
     filename = "#{config['destination_root']}thumbs/#{photo[:othername]}"
     if File.exist?(filename)
-      puts("Removing #{filename}")
+      puts("Deleting #{filename}")
       File.delete(filename)
     end
 
