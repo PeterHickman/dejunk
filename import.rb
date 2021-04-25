@@ -42,7 +42,7 @@ Dir["#{config['source_path']}*"].each do |filename|
     resize(filename, new_filename, 125)
 
     # Copy the source image
-    new_filename = "#{config['destination_root']}images/#{othername}"
+    new_filename = "#{config['destination_root']}images/#{basename}"
     FileUtils.cp(filename, new_filename)
   end
 
