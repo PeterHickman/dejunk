@@ -166,3 +166,9 @@ get '/remove_surplus' do
   message = "#{count} surplus untagged tags have been removed"
   erb :admin, { locals: { selected_menu: 'admin', message: message } }
 end
+
+get '/full_size/:photo_id' do
+  data = {}
+  data['photo'] = params[:photo_id]
+  erb :full_size, { layout: nil, locals: { data: data, selected_menu: 'picture' } }
+end
