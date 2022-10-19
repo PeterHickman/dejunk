@@ -3,3 +3,5 @@ static/images
 static/medium
 static/thumbs
 
+.bundle/
+vendor/
