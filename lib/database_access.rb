@@ -2,6 +2,8 @@ require 'tags'
 require 'paginate'
 
 class DatabaseAccess
+  attr :db
+
   def initialize(dcs)
     @db = Sequel.connect(dcs)
   end
@@ -22,8 +24,15 @@ class DatabaseAccess
     @db[:photos].where(id: photo_id).update(status: 'deleted')
   end
 
-  def add_new_photo(filename, othername, file_size)
-    @db[:photos].insert(filename: filename, othername: othername, status: 'unknown', file_size: file_size)
+  def add_new_photo(filename, othername, file_size, now)
+    existing = @db[:photos].where(filename: filename).first
+
+    if existing
+      @db[:photos].where(id: existing[:id]).update(othername: othername, status: 'unknown', file_size: file_size, imported_at: now)
+      return existing[:id]
+    else
+      @db[:photos].insert(filename: filename, othername: othername, status: 'unknown', file_size: file_size, imported_at: now)
+    end
   end
 
   def set_size(photo_id, file_size)
@@ -152,14 +161,15 @@ class DatabaseAccess
     ##
     # Get the photos just on this page
     ##
-    page_start = (page - 1) * page_size
-    page_end = page_start + page_size
-
-    photo_ids_on_page = photo_ids[page_start ... page_end]
-
     if photo_ids.any?
-        sql = "SELECT * FROM photos WHERE id IN (#{photo_ids_on_page.join(',')}) ORDER BY id DESC"
-        rows = @db[sql].all
+      page_start = (page - 1) * page_size
+      page_end = page_start + page_size
+
+      photo_ids_on_page = photo_ids[page_start ... page_end]
+
+      sql = "SELECT * FROM photos WHERE id IN (#{photo_ids_on_page.join(',')}) ORDER BY id DESC"
+      p sql
+      rows = @db[sql].all
     else
       rows = []
     end

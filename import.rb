@@ -16,6 +16,8 @@ da = DatabaseAccess.new(config['dcs'])
 
 counter = 0
 
+now_is = Time.now
+
 Dir["#{config['source_path']}*"].each do |filename|
   counter += 1
 
@@ -31,7 +33,8 @@ Dir["#{config['source_path']}*"].each do |filename|
     othername = basename.split('.')[0..-2].join('.') + '.png'
 
     file_size = File.size(filename)
-    da.add_new_photo(basename, othername, file_size)
+    photo_id = da.add_new_photo(basename, othername, file_size, now_is)
+    da.add_tag_to_photo(photo_id, 'untagged')
 
     # Create the medium image
     new_filename = "#{config['destination_root']}medium/#{othername}"
