@@ -72,7 +72,7 @@ class Tags
     includes, excludes = split_tags(tags)
 
     if counted
-      select = 'COUNT(*)'
+      select = 'COUNT(*) AS count'
     else
       select = 'photo_id'
     end

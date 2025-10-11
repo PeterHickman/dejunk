@@ -52,7 +52,7 @@ class DatabaseAccess
   def status_information
     data = { 'ok' => 0, 'junk' => 0, 'unknown' => 0, 'total' => 0 }
 
-    rows = @db['SELECT status, count(*) FROM photos GROUP BY status']
+    rows = @db['SELECT status, count(*) AS count FROM photos GROUP BY status']
 
     rows.each do |row|
       next if row[:status] == 'deleted'
@@ -101,7 +101,7 @@ class DatabaseAccess
   end
 
   def all_tags_and_counts
-    @db['SELECT DISTINCT(display), name, COUNT(*) FROM tags GROUP BY display, name ORDER BY display'].all
+    @db['SELECT DISTINCT(display), name, COUNT(*) AS count FROM tags GROUP BY display, name ORDER BY display'].all
   end
 
   def photos_by_tags(query, page_size, row_length, page)
@@ -168,7 +168,7 @@ class DatabaseAccess
       photo_ids_on_page = photo_ids[page_start ... page_end]
 
       sql = "SELECT * FROM photos WHERE id IN (#{photo_ids_on_page.join(',')}) ORDER BY id DESC"
-      p sql
+
       rows = @db[sql].all
     else
       rows = []
