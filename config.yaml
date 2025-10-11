@@ -1,4 +1,4 @@
-dcs: postgresql://peterhickman@localhost:5432/flickr_development
+dcs: sqlite://database.sqlite3
 
 source_path: /Volumes/Spare/Flickr/import/
 destination_root: /Volumes/Spare/Flickr/

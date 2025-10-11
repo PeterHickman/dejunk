@@ -10,30 +10,31 @@ So I rewrote it in Python and Flask. Because I could :P
 
 ```sql
 CREATE TABLE photos (
-    id serial PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     filename text,
-    status character varying(10) DEFAULT 'unknown'::character varying,
+    status text DEFAULT 'unknown',
     othername text,
-    file_size integer
+    file_size integer,
+    imported_at timestamp
 );
 
 
 CREATE TABLE tags (
-    id serial PRIMARY KEY,
-    name character varying(64),
-    display character varying(64),
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name text,
+    display text,
     photo_id integer NOT NULL
 );
 
-CREATE INDEX index_photos_on_filename ON photos USING btree (filename);
+CREATE INDEX index_photos_on_filename ON photos (filename);
 
-CREATE INDEX index_photos_on_status ON photos USING btree (status);
+CREATE INDEX index_photos_on_status ON photos (status);
 
-CREATE INDEX index_tags_on_name ON tags USING btree (name);
+CREATE INDEX index_tags_on_name ON tags (name);
 
-CREATE UNIQUE INDEX index_tags_on_name_and_photo_id ON tags USING btree (name, photo_id);
+CREATE UNIQUE INDEX index_tags_on_name_and_photo_id ON tags (name, photo_id);
 
-CREATE INDEX index_tags_on_photo_id ON tags USING btree (photo_id);
+CREATE INDEX index_tags_on_photo_id ON tags (photo_id);
 ```
 
 ## Security
