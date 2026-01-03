@@ -2,6 +2,7 @@
 static/images
 static/medium
 static/thumbs
+database.sqlite3
 
 .bundle/
 vendor/
