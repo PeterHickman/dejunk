@@ -15,7 +15,7 @@ config = YAML.load_file('config.yaml')
 
 da = DatabaseAccess.new(config['dcs'])
 
-set :public_folder, File.dirname(__FILE__) + '/static'
+set :public_folder, "#{File.dirname(__FILE__)}/static"
 
 helpers do
   def get_cycle(*args)
@@ -28,18 +28,18 @@ helpers do
     if size < 1024
       # Is in the bytes range
       "#{size}b"
-    elsif size < 1048576
+    elsif size < 1_048_576
       # Is in the Kb
       "#{(size / 1024.0).round(2)}Kb"
-    elsif size < 1073741824
+    elsif size < 1_073_741_824
       # Is in the Mb
-      "#{(size / 1048576.0).round(2)}Mb"
-    elsif size < 1099511627776
+      "#{(size / 1_048_576.0).round(2)}Mb"
+    elsif size < 1_099_511_627_776
       # Is in the Gb
-      "#{(size / 1073741824.0).round(2)}Gb"
+      "#{(size / 1_073_741_824.0).round(2)}Gb"
     else
       # Is in the Tb
-      "#{(size / 1099511627776.0).round(2)}Tb"
+      "#{(size / 1_099_511_627_776.0).round(2)}Tb"
     end
   end
 end
@@ -53,7 +53,7 @@ def get_page
 end
 
 get '/' do
-  totals = da.status_information()
+  totals = da.status_information
   erb :status, { locals: { totals: totals, selected_menu: 'status' } }
 end
 
@@ -80,7 +80,8 @@ post '/dejunk' do
 
   ids = {}
   params.each do |k, v|
-    next unless k.index('photo_') == 0
+    next if k.index('photo_').nil?
+
     ids[k.split('_').last] = v
   end
 
@@ -100,7 +101,8 @@ post '/purge' do
 
   ids = {}
   params.each do |k, v|
-    next unless k.index('photo_') == 0
+    next if k.index('photo_').nil?
+
     ids[k.split('_').last] = v
   end
 

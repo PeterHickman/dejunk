@@ -30,7 +30,7 @@ Dir["#{config['source_path']}*"].each do |filename|
   else
     puts("#{counter}: Need to import #{basename}")
 
-    othername = basename.split('.')[0..-2].join('.') + '.png'
+    othername = "#{basename.split('.')[0..-2].join('.')}.png"
 
     file_size = File.size(filename)
     photo_id = da.add_new_photo(basename, othername, file_size, now_is)

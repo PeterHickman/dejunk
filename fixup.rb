@@ -46,7 +46,7 @@ da.all_the_photos.each do |photo|
     source = "#{config['destination_root']}images/#{photo[:filename]}"
 
     if File.exist?(source)
-      if photo[:file_size] == nil
+      if photo[:file_size].nil?
         file_size = File.size(source)
         da.set_size(photo[:id], file_size)
         puts("Updated size #{source} to #{file_size}")
@@ -59,7 +59,7 @@ da.all_the_photos.each do |photo|
       resize(source, filename, 125) unless File.exist?(filename)
 
       number = da.all_tags_for_photo(photo[:id]).size
-      if number == 0
+      if number.zero?
         puts("Added 'untagged' tag to #{photo[:id]}")
         da.add_tag_to_photo(photo[:id], 'untagged')
       end
